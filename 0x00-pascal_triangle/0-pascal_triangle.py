@@ -1,26 +1,32 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
+"""
+Pascal's Triangle function that generates the triangle up to n levels
+"""
 
 def pascal_triangle(n):
+    """
+    Generates Pascal's Triangle up to n levels.
+    Arguments:
+    n -- number of rows in the triangle
+    Returns:
+    A list of lists representing Pascal's Triangle
+    """
     if n <= 0:
         return []
-    
-    triangle = [[1]]  # Starting with the first row
-    
+
+    triangle = [[1]]  # Start with the first row
     for i in range(1, n):
-        row = [1]  # First element of the row is always 1
-        prev_row = triangle[i - 1]
-        
-        # Calculate the in-between elements of the row
+        row = [1]  # Every row starts with 1
         for j in range(1, i):
-            row.append(prev_row[j - 1] + prev_row[j])
-        
-        row.append(1)  # Last element of the row is always 1
+            row.append(triangle[i - 1][j - 1] + triangle[i - 1][j])  # Compute the inner elements
+        row.append(1)  # Every row ends with 1
         triangle.append(row)
-    
+
     return triangle
 
-# Call the function and print the result
+
 if __name__ == "__main__":
-    from pprint import pprint  # Import to pretty-print the triangle
-    pprint(pascal_triangle(5))  # Change 5 to the size of the triangle you want
+    n = 5  # Test case; modify as needed
+    for row in pascal_triangle(n):
+        print([int(x) for x in row])  # This ensures the correct format with no extra spaces or commas
 
