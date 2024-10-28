@@ -1,39 +1,51 @@
 #!/usr/bin/python3
 import sys
 
-# Initialize variables
+# Initialize variables to store file size and status codes
+total_file_size = 0
 status_codes = {'200': 0, '301': 0, '400': 0, '401': 0, '403': 0, '404': 0, '405': 0, '500': 0}
-total_size = 0
 
-# Function to print metrics
-def print_metrics(total_size, status_codes):
-    print("File size:", total_size)
+def print_stats():
+    """Prints accumulated metrics."""
+    print("File size: {}".format(total_file_size))
     for code in sorted(status_codes.keys()):
         if status_codes[code] > 0:
-            print(f"{code}: {status_codes[code]}")
+            print("{}: {}".format(code, status_codes[code]))
 
-# Main loop to process each line from stdin
 line_count = 0
+
 try:
     for line in sys.stdin:
         parts = line.split()
+        
+        # Check if line contains at least 7 parts (minimum valid format)
         if len(parts) < 7:
             continue
-        code = parts[-2]
-        size = parts[-1]
+        
+        # Extract file size and status code
+        file_size = parts[-1]
+        status_code = parts[-2]
+        
+        # Update total file size
+        try:
+            total_file_size += int(file_size)
+        except ValueError:
+            continue  # Skip if file_size is not an integer
+        
+        # Update status code count if valid
+        if status_code in status_codes:
+            status_codes[status_code] += 1
 
-        # Accumulate metrics
-        if code in status_codes:
-            status_codes[code] += 1
-        total_size += int(size)
         line_count += 1
 
-        # Print every 10 lines
+        # Print stats every 10 lines
         if line_count % 10 == 0:
-            print_metrics(total_size, status_codes)
+            print_stats()
 
 except KeyboardInterrupt:
-    # Final print on interruption
-    print_metrics(total_size, status_codes)
+    print_stats()
     raise
+
+# Print final statistics
+print_stats()
 
